@@ -1,0 +1,1 @@
+<p> this is purchases page </p>
