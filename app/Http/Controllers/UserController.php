@@ -67,9 +67,10 @@ class UserController extends Controller
 
         $user = User::where('email',$request->email)->first();
 
-        if($user == null)
+        if($user == null || !Hash::check($request->password , $user->password))
         {
-            return response('message' , 'we canot find any email like that');
+            $message = ['message' => 'we canot find any email like that'];
+            return response($message);
         }
         else
         {
@@ -79,11 +80,8 @@ class UserController extends Controller
                 'user' => $user,
                 'token' => $token
             ];
-            return response($response);
-        }
-
-        
-    }
+            return response($response); 
+        }}
 
     public function logout(Request $request)
     {

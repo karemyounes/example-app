@@ -32,7 +32,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::Post('{id}/updateproduct', [ProductController::class , 'update'] ) ;
     Route::get('deleteproduct/{id}' , [ProductController::class , 'destroy'] ) ;
     Route::Post('createorder' , [ProductController::class , 'createorder']);
-    Route::get('order', [ProductController::class , 'orderpage'] );
+    Route::get('incompleteorder', [ProductController::class , 'get_incomplete_order'] );
+    Route::get('startorder', [ProductController::class , 'startorder'] );
 
 });
 

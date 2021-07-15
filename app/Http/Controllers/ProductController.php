@@ -15,13 +15,7 @@ class ProductController extends Controller
     {
         $product = Product::all();
         $prodarray = array('product' => $product);
-        //return view('product.allproducts',$prodarray);
         return response()->json($prodarray);
-    }
-
-    public function create()
-    {
-        return view('product.createproduct');
     }
 
     public function store(Request $request)
@@ -43,24 +37,21 @@ class ProductController extends Controller
         $data->price = $request->price ;
         $data->picture = $imagename ;
         $data->save();
-        //return redirect('product');
         return response()->json($data);
     }
 
     public function show($id)
     {
         $product = Product::where('id', $id)->first();
-        $arr = array('product' => $product);
-        //return view('product.oneproduct',$arr);
-        return response()->json($arr);
+        return response()->json($product);
     }
 
-    public function edit($id)
-    {
-        $prod = Product::where('id', $id)->first();
-        //return view('product.edit',['prod'=>$prod]);
-        return response()->json($prod);
-    }
+    // public function edit($id)
+    // {
+    //     $prod = Product::where('id', $id)->first();
+    //     //return view('product.edit',['prod'=>$prod]);
+    //     return response()->json($prod);
+    // }
 
     public function update(Request $request)
     {
@@ -82,7 +73,6 @@ class ProductController extends Controller
         $data->price = $request->price ;
         $data->picture = $imagename ;
         $data->save();
-        //return redirect('product');
         return response()->json($data);
     }
 
@@ -90,7 +80,6 @@ class ProductController extends Controller
     {
         $data = Product::find($id);
         $data->delete();
-        //return redirect('product');
         return response()->json($data);
     }
 
@@ -107,7 +96,7 @@ class ProductController extends Controller
         {  
             // get the number of user orders
             
-            $count = Order::where('user_id', $usid) -> count();
+            $count = Order::where('user_id', $userid) -> count();
             $orderno = $count + 1 ;
 
             // create new order
@@ -116,7 +105,7 @@ class ProductController extends Controller
             $neworder -> state = 'incomplete' ;
             $neworder -> user_id = Auth::user() -> id ;
             $neworder -> save() ;
-            $order = Order::where([['state','incomplete'] ,['user_id',$usid]])->first();
+            $order = Order::where([['state','incomplete'] ,['user_id',$userid]])->first();
         }
 
         // save new purchases product in order
@@ -126,25 +115,58 @@ class ProductController extends Controller
         $newpurchase -> order_id = $order -> id ;
         $newpurchase ->save() ;
 
-        //return redirect('product')-> with('success','purchase successfully') ;
         return response()->json($newpurchase);
     }
 
+    // get details of order
 
-    public function orderpage()
+    public function get_incomplete_order()
     {
+        $counter = 0 ;
+        $list = [] ;
         $id = Auth::user() -> id;
         $order = Order::where([['state','incomplete'] ,['user_id',$id]])->first();
-        $orderdetails = Purchase::where('order_id', $order['id'])->get();
-        return response()->json($orderdetails);
+
+        if(!$order)
+        {   
+            $response = [
+                'message' => 'sorry you donot have any orders yet'
+            ];
+            return response($response);
+        }
+        else
+        {
+        $orderdetails = Purchase::where('order_id', $order['id']) -> get();
+        foreach($orderdetails as $ord)
+        {
+             
+            $list[$counter] = Product::where('id', $ord['product_id']) -> get();
+            $counter++ ;
+        }
+        $response = 
+        [
+            'order' => $order -> name ,
+            'products' => $list,
+        ];
+        return $response;
+        }
+        
     }
 
-    /*public function startorder()
+
+    public function startorder(Request $request)
     {
-        $id = Auth::user() -> id;
-        $order = Order::where([['state','incomplete'] ,['user_id',$id]])->update(['state' => 'start']);
-        $updatedorder = Order::where([['state','start'] ,['user_id',$id]])->first();
-        return response()->json($updatedorder);
+        $order = Order::where('id',$request->id) -> first() ;
+        if($order->state != 'started')
+        {
+            $update = Order::where('id',$request->id)->update(['state'=>'started']);
+            $order = Order::where('id',$request->id)->first();
+            return response()->json($order);
+        }
+        else{
+            $response = [ 'message' => 'this order already started'];
+            return response($response);
+        }
     }
 
     public function indelevered(Request $request)
@@ -152,6 +174,6 @@ class ProductController extends Controller
         $id = Auth::user() -> id;
         $order = Order::where([['state','start'] ,['user_id',$id]])->update(['state' => 'indelevered']);
     }
-*/
+
    
 }
