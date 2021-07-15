@@ -33,8 +33,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('deleteproduct/{id}' , [ProductController::class , 'destroy'] ) ;
     Route::Post('createorder' , [ProductController::class , 'createorder']);
     Route::get('incompleteorder', [ProductController::class , 'get_incomplete_order'] );
-    Route::get('startorder', [ProductController::class , 'startorder'] );
-
+    Route::Post('startorder', [ProductController::class , 'startorder'] );
+    Route::Post('indelevered', [ProductController::class , 'indelevered'] );
 });
 
 

@@ -171,8 +171,17 @@ class ProductController extends Controller
 
     public function indelevered(Request $request)
     {
-        $id = Auth::user() -> id;
-        $order = Order::where([['state','start'] ,['user_id',$id]])->update(['state' => 'indelevered']);
+        $order = Order::where('id',$request->id) -> first() ;
+        if($order->state != 'indelevered')
+        {
+            $update = Order::where('id',$request->id)->update(['state'=>'indelevered']);
+            $order = Order::where('id',$request->id)->first();
+            return response()->json($order);
+        }
+        else{
+            $response = [ 'message' => 'this order already indelevered'];
+            return response($response);
+        }
     }
 
    
