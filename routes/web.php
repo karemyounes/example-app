@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use Laravel\Socialite\Facades\Socialite;
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,18 @@ Route::Post('createorder' , [ProductController::class , 'createorder']);
 Route::get('order', [ProductController::class , 'orderpage'] );
 Route::get('startorder', [ProductController::class , 'startorder'] );
 
+//Route::get('login/facebook', [UserController::class , 'redirectToProvider'] );
+//Route::get('login/facebook/callback', [UserController::class , 'handleProviderCallback'] );
+
+Route::get('/auth/redirect', function () {
+    return Socialite::driver('facebook')->redirect();
+});
+
+Route::get('/auth/callback', function () {
+    $user = Socialite::driver('github')->user();
+
+    dd($user->token);
+});
 
 /*Route::get('auth/redirect', function () {
     return Socialite::driver('facebook')->redirect();

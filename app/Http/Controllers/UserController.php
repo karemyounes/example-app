@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Laravel\Socialite\Facades\Socialite;
 
 class UserController extends Controller
 {
@@ -83,10 +84,21 @@ class UserController extends Controller
             return response($response); 
         }}
 
-    public function logout(Request $request)
+    public function logout()
     {
         auth()-> user() -> tokens() -> delete();
         return ['message' => 'logged out'];
+    }
+
+    public function redirectToProvider()
+    {
+        return Socialite::driver('facebook')->redirect();
+    }
+
+    public function handleProviderCallback()
+    {
+        $user = Socialite::driver('facebook')->user();
+        dd($user);
     }
 
 

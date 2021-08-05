@@ -17,6 +17,24 @@ class ProductController extends Controller
         $prodarray = array('product' => $product);
         return response()->json($prodarray);
     }
+    public function getmen()
+    {
+        $product = Product::where('type','رجالي').get();
+        $prodarray = array('product' => $product);
+        return response()->json($prodarray);
+    }
+    public function getwomen()
+    {
+        $product = Product::where('type','حريمي').get();
+        $prodarray = array('product' => $product);
+        return response()->json($prodarray);
+    }
+    public function getchild()
+    {
+        $product = Product::where('type','أطفالي').get();
+        $prodarray = array('product' => $product);
+        return response()->json($prodarray);
+    }
 
     public function store(Request $request)
     {    if ($request->hasFile('picture')) {

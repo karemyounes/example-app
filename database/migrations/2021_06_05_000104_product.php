@@ -17,7 +17,8 @@ class Product extends Migration
             $table -> id();
             $table -> string('productname');
             $table -> string('type');
-            $table -> float('price');
+            $table -> decimal('offer');
+            $table -> decimal('price');
             $table -> string('picture');
         });
     }
